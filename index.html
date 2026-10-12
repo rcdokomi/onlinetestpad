@@ -8,7 +8,6 @@
 <body>
 
 <div class="quiz-container">
-    
     <!-- ЭКРАН 1: РЕГИСТРАЦИЯ -->
     <div id="reg-screen">
         <h2>Регистрация</h2>
@@ -27,9 +26,11 @@
 
     <!-- ЭКРАН 2: ВОПРОСЫ ТЕСТА -->
     <div id="quiz-screen">
-        <div class="progress-bar" id="progress-text">Вопрос 1 из 50</div>
-        <h2 id="question-title" style="font-size: 20px; color: #222;">Текст вопроса</h2>
-        
+        <div class="quiz-header">
+            <div id="quiz-timer">60:00</div>
+            <div class="progress-bar" id="progress-text">Вопрос 1 из 50</div>
+        </div>
+        <h2 id="question-title">Текст вопроса</h2>
         <form id="quizForm">
             <div id="answer-container"></div>
             <button type="submit" id="next-btn">Далее</button>
@@ -39,381 +40,131 @@
     <!-- ЭКРАН 3: ИТОГОВАЯ СТАТИСТИКА -->
     <div id="result-screen">
         <h2>Тест завершен!</h2>
-        
         <div class="score-circle" id="percent-circle">0%</div>
-
         <div class="stat-item pusechka-block" id="pusechka-text"></div>
-
-        <div class="stat-item">
-            Общее количество вопросов: <span class="stat-value">50</span>
-        </div>
-        <div class="stat-item">
-            Количество верных ответов: <span class="stat-value" id="correct-answers">0</span>
-        </div>
-        <div class="stat-item">
-            Процент верных ответов: <span class="stat-value" id="percent-text">0%</span>
-        </div>
-
+        <div class="stat-item">Затраченное время: <span class="stat-value" id="time-spent">00:00</span></div>
+        <div class="stat-item">Общее количество вопросов: <span class="stat-value">50</span></div>
+        <div class="stat-item">Количество верных ответов: <span class="stat-value" id="correct-answers">0</span></div>
+        <div class="stat-item">Процент верных ответов: <span class="stat-value" id="percent-text">0%</span></div>
         <button onclick="location.reload()">Пройти еще раз</button>
     </div>
 </div>
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f9;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        margin: 0;
-        padding: 20px;
-        box-sizing: border-box;
-    }
-    .quiz-container {
-        background: white;
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        max-width: 600px;
-        width: 100%;
-        box-sizing: border-box;
-    }
+    body { font-family: Arial, sans-serif; background-color: #f4f4f9; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
+    .quiz-container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-width: 600px; width: 100%; box-sizing: border-box; }
     h2 { color: #333; margin-bottom: 20px; text-align: center; }
-    .progress-bar {
-        font-size: 14px;
-        color: #666;
-        margin-bottom: 15px;
-        text-align: right;
-        font-weight: bold;
-    }
-    
-    .input-group {
-        margin-bottom: 15px;
-    }
-    .input-group label {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: bold;
-        color: #555;
-        font-size: 14px;
-    }
-    .input-group input, .text-answer-input {
-        width: 100%;
-        padding: 12px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        box-sizing: border-box;
-        font-size: 16px;
-    }
-    .input-group input:focus, .text-answer-input:focus {
-        border-color: #4CAF50;
-        outline: none;
-    }
-
-    /* Принудительный перевод букв ввода в верхний регистр */
-    .text-answer-input {
-        text-transform: uppercase;
-        font-weight: bold;
-        letter-spacing: 1px;
-        font-size: 18px;
-        text-align: center;
-    }
-
-    /* Сетка для 12 вариантов ответов */
-    .options-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-        gap: 10px;
-        margin-top: 15px;
-    }
-    .options-grid.words-layout {
-        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    }
-
-    .option {
-        padding: 12px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background 0.2s, border-color 0.2s;
-        display: flex;
-        align-items: center;
-        box-sizing: border-box;
-    }
+    .quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #f0f0f5; padding-bottom: 10px; }
+    .progress-bar { font-size: 14px; color: #666; font-weight: bold; }
+    #quiz-timer { font-size: 18px; font-weight: bold; color: #e53935; background-color: #ffebee; padding: 5px 12px; border-radius: 20px; border: 1px solid #ffcdd2; }
+    .input-group { margin-bottom: 15px; }
+    .input-group label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; font-size: 14px; }
+    .input-group input, .text-answer-input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 16px; }
+    .input-group input:focus, .text-answer-input:focus { border-color: #4CAF50; outline: none; }
+    .text-answer-input { text-transform: uppercase; font-weight: bold; letter-spacing: 1px; font-size: 18px; text-align: center; }
+    .options-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; margin-top: 15px; }
+    .options-grid.words-layout { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+    .option { padding: 12px; border: 1px solid #ddd; border-radius: 5px; cursor: pointer; transition: background 0.2s; display: flex; align-items: center; }
     .option:hover { background-color: #eef2ff; border-color: #3f51b5; }
-    .option input { margin-right: 10px; cursor: pointer; min-width: 16px; }
+    .option input { margin-right: 10px; cursor: pointer; }
     .option label { cursor: pointer; display: block; width: 100%; font-size: 15px; }
-    
-    button {
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        padding: 14px 20px;
-        border-radius: 5px;
-        cursor: pointer;
-        width: 100%;
-        font-size: 16px;
-        margin-top: 25px;
-        font-weight: bold;
-    }
+    button { background-color: #4CAF50; color: white; border: none; padding: 14px 20px; border-radius: 5px; cursor: pointer; width: 100%; font-size: 16px; margin-top: 25px; font-weight: bold; }
     button:hover { background-color: #45a049; }
-    
-    #quiz-screen, #result-screen {
-        display: none;
-    }
-    
-    .stat-item {
-        font-size: 18px;
-        margin: 10px 0;
-        color: #444;
-        padding: 15px;
-        background: #f8f9fa;
-        border-radius: 5px;
-        border-left: 5px solid #4CAF50;
-        text-align: left;
-    }
-    .stat-value {
-        font-weight: bold;
-        color: #000;
-    }
-    .pusechka-block {
-        background: #fff0f6;
-        border-left-color: #e91e63;
-        font-size: 19px;
-        color: #c2185b;
-        line-height: 1.5;
-    }
-    .score-circle {
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        background: #eef2ff;
-        color: #4CAF50;
-        font-size: 24px;
-        font-weight: bold;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin: 0 auto 20px auto;
-        border: 3px solid #4CAF50;
-    }
+    #quiz-screen, #result-screen { display: none; }
+    .stat-item { font-size: 18px; margin: 10px 0; color: #444; padding: 15px; background: #f8f9fa; border-radius: 5px; border-left: 5px solid #4CAF50; }
+    .pusechka-block { background: #fff0f6; border-left-color: #e91e63; font-size: 19px; color: #c2185b; line-height: 1.5; }
+    .score-circle { width: 100px; height: 100px; border-radius: 50%; background: #eef2ff; color: #4CAF50; font-size: 24px; font-weight: bold; display: flex; justify-content: center; align-items: center; margin: 0 auto 20px auto; border: 3px solid #4CAF50; }
 </style>
 <script>
-    const alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
-    const engWords = ["Alpha", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot", "Golf", "Hotel", "India", "Juliet", "Kilo", "Lima", "Mike", "November", "Oscar", "Papa", "Quebec", "Romeo", "Sierra", "Tango", "Uniform", "Victor", "Whisky", "X-Ray", "Yankee", "Zulu"];
-    const rusWords = ["Альфа", "Браво", "Чарли", "Дельта", "Эко", "Фокстрот", "Гольф", "Хотел", "Индиа", "Джульет", "Кило", "Лима", "Майк", "Новембер", "Оскар", "Папа", "Квебек", "Ромео", "Сьерра", "Танго", "Юниформ", "Виктор", "Виски", "Эксрэй", "Янки", "Зулу"];
-    const compositeWords = engWords.map((w, idx) => `${w} (${rusWords[idx]})`);
+    var alphabet = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"];
+    var engWords = ["Alpha","Bravo","Charlie","Delta","Echo","Foxtrot","Golf","Hotel","India","Juliet","Kilo","Lima","Mike","November","Oscar","Papa","Quebec","Romeo","Sierra","Tango","Uniform","Victor","Whisky","X-Ray","Yankee","Zulu"];
+    var rusWords = ["Альфа","Браво","Чарли","Дельта","Эко","Фокстрот","Гольф","Хотел","Индиа","Джульет","Кило","Лима","Майк","Новембер","Оскар","Папа","Квебек","Ромео","Сьерра","Танго","Юниформ","Виктор","Виски","Эксрэй","Янки","Зулу"];
+    var compositeWords = []; 
+    for(var k=0; k<26; k++) { compositeWords.push(engWords[k]+" ("+rusWords[k]+")"); }
 
-    const allQuestions = [];
+    var userFullName="", userCallsign="", selectedQuestions=[], currentQuestionIndex=0, score=0;
+    var timeLeft = 3600, timerInterval = null;
 
-    // АВТОМАТИЧЕСКАЯ СБОРКА БАЗЫ ИЗ 130 ВОПРОСОВ ПО ВАШИМ БЛОКАМ
-    // Блок 1 (1 - 26): Ввод английской заглавной буквы
-    for(let i = 0; i < 26; i++) {
-        allQuestions.push({
-            id: i + 1,
-            type: "text",
-            question: `Какая буква фонетического алфавита соответствует «${engWords[i]}»?`,
-            correct: alphabet[i]
-        });
+    function getRandomIndices(count) {
+        var arr = []; while(arr.length < count) { var r = Math.floor(Math.random()*26); if(arr.indexOf(r)===-1) arr.push(r); } return arr;
     }
-
-    // Блок 2 (27 - 52): Ввод английской заглавной буквы
-    for(let i = 0; i < 26; i++) {
-        allQuestions.push({
-            id: i + 27,
-            type: "text",
-            question: `Какая буква фонетического алфавита соответствует «${rusWords[i]}»?`,
-            correct: alphabet[i]
-        });
-    }
-
-    // Блок 3 (53 - 78): Расшифровка буквы (выбор из 12 вариантов слов)
-    for(let i = 0; i < 26; i++) {
-        allQuestions.push({
-            id: i + 53,
-            type: "choice",
-            layout: "words",
-            question: `Как расшифровывается буква фонетического алфавита ${alphabet[i]}?`,
-            optionsPool: compositeWords,
-            correct: compositeWords[i]
-        });
-    }
-
-    // Блок 4 (79 - 104): Выбор из 12 вариантов букв
-    for(let i = 0; i < 26; i++) {
-        allQuestions.push({
-            id: i + 79,
-            type: "choice",
-            layout: "letters",
-            question: `Какая буква фонетического алфавита соответствует «${engWords[i]}»?`,
-            optionsPool: alphabet,
-            correct: alphabet[i]
-        });
-    }
-
-    // Блок 5 (105 - 130): Выбор из 12 вариантов букв
-    for(let i = 0; i < 26; i++) {
-        allQuestions.push({
-            id: i + 105,
-            type: "choice",
-            layout: "letters",
-            question: `Какая буква фонетического алфавита соответствует «${rusWords[i]}»?`,
-            optionsPool: alphabet,
-            correct: alphabet[i]
-        });
-    }
-
-    let userFullName = "";
-    let userCallsign = "";
-    let selectedQuestions = []; 
-    let currentQuestionIndex = 0;
-    let score = 0;
-
-    function getRandomSample(array, count) {
-        return [...array].sort(() => 0.5 - Math.random()).slice(0, count);
-    }
-
-    // Генерация ровно 50 случайных вопросов (по 10 из каждого блока)
     function generateQuizPool() {
-        const pool = [];
-        const ranges = [
-            { start: 1, end: 26 },
-            { start: 27, end: 52 },
-            { start: 53, end: 78 },
-            { start: 79, end: 104 },
-            { start: 105, end: 130 }
-        ];
-
-        ranges.forEach(range => {
-            const rangeQuestions = allQuestions.filter(q => q.id >= range.start && q.id <= range.end);
-            const selectedTen = getRandomSample(rangeQuestions, 10);
-            pool.push(...selectedTen);
-        });
-
-        return pool.sort(() => 0.5 - Math.random());
+        var pool = [], b1=getRandomIndices(10), b2=getRandomIndices(10), b3=getRandomIndices(10), b4=getRandomIndices(10), b5=getRandomIndices(10);
+        for(var i=0; i<10; i++) { pool.push({t:"txt", q:"Какая буква фонетического алфавита соответствует «"+engWords[b1[i]]+"»?", c:alphabet[b1[i]]}); }
+        for(var i=0; i<10; i++) { pool.push({t:"txt", q:"Какая буква фонетического алфавита соответствует «"+rusWords[b2[i]]+"»?", c:alphabet[b2[i]]}); }
+        for(var i=0; i<10; i++) { pool.push({t:"ch", l:"w", q:"Как расшифровывается буква фонетического алфавита "+alphabet[b3[i]]+"?", p:compositeWords, c:compositeWords[b3[i]], idx:b3[i]}); }
+        for(var i=0; i<10; i++) { pool.push({t:"ch", l:"l", q:"Какая буква фонетического алфавита соответствует «"+engWords[b4[i]]+"»?", p:alphabet, c:alphabet[b4[i]], idx:b4[i]}); }
+        for(var i=0; i<10; i++) { pool.push({t:"ch", l:"l", q:"Какая буква фонетического алфавита соответствует «"+rusWords[b5[i]]+"»?", p:alphabet, c:alphabet[b5[i]], idx:b5[i]}); }
+        return pool.sort(function(){return 0.5 - Math.random();});
     }
-
-    // Подмешивание правильного ответа в 11 случайных вариантов
-    function generateTwelveOptions(correctAnswer, fullPool) {
-        const filteredPool = fullPool.filter(item => item !== correctAnswer);
-        const elevenRandom = getRandomSample(filteredPool, 11);
-        elevenRandom.push(correctAnswer);
-        return elevenRandom.sort(() => 0.5 - Math.random());
+    function generateOptions(correctIdx, isWords) {
+        var src = isWords ? compositeWords : alphabet, res = [src[correctIdx]];
+        while(res.length < 12) { var r = Math.floor(Math.random()*26); if(r!==correctIdx && res.indexOf(src[r])===-1) res.push(src[r]); }
+        return res.sort(function(){return 0.5 - Math.random();});
     }
-
+    function startTimer() {
+        timerInterval = setInterval(function() {
+            timeLeft--;
+            var m = Math.floor(timeLeft/60), s = timeLeft%60;
+            document.getElementById('quiz-timer').innerText = (m<10?'0':'')+m+":"+(s<10?'0':'')+s;
+            if(timeLeft<=0) { clearInterval(timerInterval); showResults(true); }
+        }, 1000);
+    }
     function displayCurrentQuestion() {
-        const progressText = document.getElementById('progress-text');
-        const questionTitle = document.getElementById('question-title');
-        const container = document.getElementById('answer-container');
-        
-        container.innerHTML = "";
-        progressText.innerText = `Вопрос ${currentQuestionIndex + 1} из 50`;
-
-        const currentQ = selectedQuestions[currentQuestionIndex];
-        questionTitle.innerText = currentQ.question;
-
-        if (currentQ.type === "choice") {
-            const gridDiv = document.createElement('div');
-            gridDiv.className = 'options-grid ' + (currentQ.layout === "words" ? "words-layout" : "");
-
-            const twelveOptions = generateTwelveOptions(currentQ.correct, currentQ.optionsPool);
-
-            twelveOptions.forEach(opt => {
-                const div = document.createElement('div');
-                div.className = 'option';
-                div.innerHTML = `<label><input type="radio" name="userAnswer" value="${opt}" required> ${opt}</label>`;
-                gridDiv.appendChild(div);
-            });
-            container.appendChild(gridDiv);
-        } else if (currentQ.type === "text") {
-            const div = document.createElement('div');
-            div.className = 'input-group';
-            div.style.marginTop = "20px";
-            div.innerHTML = `
-                <label>Введите ваш ответ английской заглавной буквой:</label>
-                <input type="text" class="text-answer-input" id="textInput" required autocomplete="off" maxlength="1" placeholder="A">
-            `;
-            container.appendChild(div);
-
-            const inputEl = div.querySelector('#textInput');
-            inputEl.focus();
-            inputEl.addEventListener('input', function() {
-                this.value = this.value.toUpperCase().replace(/[^A-Z]/g, ''); // Только латиница в верхнем регистре
-            });
+        document.getElementById('progress-text').innerText = "Вопрос " + (currentQuestionIndex+1) + " из 50";
+        var cur = selectedQuestions[currentQuestionIndex];
+        document.getElementById('question-title').innerText = cur.q;
+        var container = document.getElementById('answer-container'); container.innerHTML = "";
+        if(cur.t === "ch") {
+            var g = document.createElement('div'); g.className = 'options-grid' + (cur.l==='w'?' words-layout':'');
+            var opts = generateOptions(cur.idx, cur.l==='w');
+            for(var o=0; o<12; o++) {
+                var d = document.createElement('div'); d.className = 'option';
+                d.innerHTML = '<label><input type="radio" name="userAnswer" value="'+opts[o]+'" required> '+opts[o]+'</label>';
+                g.appendChild(d);
+            }
+            container.appendChild(g);
+        } else {
+            var d = document.createElement('div'); d.className = 'input-group'; d.style.marginTop = "20px";
+            d.innerHTML = '<label>Введите ваш ответ английской заглавной буквой:</label><input type="text" class="text-answer-input" id="textInput" required autocomplete="off" maxlength="1" placeholder="A">';
+            container.appendChild(d);
+            var inp = document.getElementById('textInput'); inp.focus();
+            inp.addEventListener('input', function() { this.value = this.value.toUpperCase().replace(/[^A-Z]/g, ''); });
         }
     }
-
     document.getElementById('regForm').addEventListener('submit', function(e) {
         e.preventDefault();
         userFullName = document.getElementById('fullName').value.trim();
         userCallsign = document.getElementById('callsign').value.trim();
-
         selectedQuestions = generateQuizPool();
-
         document.getElementById('reg-screen').style.display = 'none';
         document.getElementById('quiz-screen').style.display = 'block';
-
-        displayCurrentQuestion();
+        displayCurrentQuestion(); startTimer();
     });
-
     document.getElementById('quizForm').addEventListener('submit', function(e) {
         e.preventDefault();
-
-        const currentQ = selectedQuestions[currentQuestionIndex];
-        let userAnswer = "";
-
-        if (currentQ.type === "choice") {
-            userAnswer = document.querySelector('input[name="userAnswer"]:checked').value;
-            if (userAnswer === currentQ.correct) {
-                score++;
-            }
-        } else if (currentQ.type === "text") {
-            userAnswer = document.getElementById('textInput').value.trim().toUpperCase();
-            if (userAnswer === currentQ.correct) {
-                score++;
-            }
+        var cur = selectedQuestions[currentQuestionIndex], ans = "";
+        if(cur.t === "ch") {
+            var r = document.querySelector('input[name="userAnswer"]:checked'); if(r) ans = r.value;
+        } else {
+            ans = document.getElementById('textInput').value.trim().toUpperCase();
         }
-
+        if(ans === cur.c) score++;
         currentQuestionIndex++;
-
-        if (currentQuestionIndex < 50) {
-            displayCurrentQuestion();
-        } else {
-            showResults();
-        }
+        if(currentQuestionIndex < 50) { displayCurrentQuestion(); } else { clearInterval(timerInterval); showResults(false); }
     });
-
-    function showResults() {
-        const totalQuestions = 50;
-        const successPercent = Math.round((score / totalQuestions) * 100);
-
-        let nameAndCallsign = userFullName;
-        if (userCallsign !== "") {
-            nameAndCallsign += ` (${userCallsign})`;
-        }
-
-        let pointsText = "баллов";
-        if (score % 10 === 1 && score % 100 !== 11) {
-            pointsText = "балл";
-        } else if ([2, 3, 4].includes(score % 10) && ![12, 13, 14].includes(score % 100)) {
-            pointsText = "балла";
-        }
-
-        document.getElementById('pusechka-text').innerHTML = `Наша пусечка, <span class="stat-value">${nameAndCallsign}</span>, набрал (а) <span class="stat-value">${score} ${pointsText}</span> из 50.`;
-
+    function showResults(timeIsUp) {
+        var diff = 3600 - timeLeft, m = Math.floor(diff/60), s = diff%60;
+        document.getElementById('time-spent').innerText = (m<10?'0':'')+m+":"+(s<10?'0':'')+s + (timeIsUp ? " (Время)..." : "");
+        var txt = userFullName + (userCallsign !== "" ? " (" + userCallsign + ")" : "");
+        var pText = "баллов", ending = score % 10, lTwo = score % 100;
+        if (ending === 1 && lTwo !== 11) pText = "балл";
+        else if ((ending === 2 || ending === 3 || ending === 4) && !(lTwo >= 12 && lTwo <= 14)) pText = "балла";
+        document.getElementById('pusechka-text').innerHTML = 'Наша пусечка, ' + txt + ', набрал (а) ' + score + ' ' + pText + ' из 50.';
+        var pct = Math.round((score/50)*100);
         document.getElementById('correct-answers').innerText = score;
-        document.getElementById('percent-text').innerText = successPercent + '%';
-        document.getElementById('percent-circle').innerText = successPercent + '%';
-
-        const circle = document.getElementById('percent-circle');
-        if (successPercent >= 70) {
-            circle.style.color = '#4CAF50';
-            circle.style.borderColor = '#4CAF50';
-        } else {
-            circle.style.color = '#f44336';
-            circle.style.borderColor = '#f44336';
-        }
-
+        document.getElementById('percent-text').innerText = pct + '%';
+        document.getElementById('percent-circle').innerText = pct + '%';
+        var c = document.getElementById('percent-circle'); c.style.color = c.style.borderColor = (pct >= 70) ? '#4CAF50' : '#f44336';
         document.getElementById('quiz-screen').style.display = 'none';
         document.getElementById('result-screen').style.display = 'block';
     }
