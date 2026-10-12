@@ -3,114 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Тест: Какого цвета ёлки?</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .quiz-container {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            max-width: 450px;
-            width: 100%;
-        }
-        h2 { color: #333; margin-bottom: 20px; }
-        .option {
-            margin: 10px 0;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .option:hover { background-color: #eef2ff; }
-        .option input { margin-right: 10px; cursor: pointer; }
-        .option label { cursor: pointer; display: block; width: 100%; }
-        button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-            font-size: 16px;
-            margin-top: 15px;
-        }
-        button:hover { background-color: #45a049; }
-        
-        /* Стили для страницы с результатами */
-        #result-screen {
-            display: none; /* Изначально скрыта */
-            text-align: center;
-        }
-        .stat-item {
-            font-size: 18px;
-            margin: 15px 0;
-            color: #444;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 5px;
-            border-left: 5px solid #4CAF50;
-        }
-        .stat-value {
-            font-weight: bold;
-            color: #000;
-        }
-        .score-circle {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: #eef2ff;
-            color: #4CAF50;
-            font-size: 28px;
-            font-weight: bold;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0 auto 20px auto;
-            border: 3px solid #4CAF50;
-        }
-    </style>
+    <title>Тестирование: Фонетический алфавит</title>
 </head>
 <body>
 
 <div class="quiz-container">
-    <!-- ЭКРАН С ВОПРОСОМ -->
-    <div id="quiz-screen">
-        <h2>Вопрос: Какого цвета ёлки?</h2>
-        <form id="quizForm">
-            <div class="option">
-                <label><input type="radio" name="answer" value="Красного" required> Красного</label>
+    
+    <!-- ЭКРАН 1: РЕГИСТРАЦИЯ -->
+    <div id="reg-screen">
+        <h2>Регистрация</h2>
+        <form id="regForm">
+            <div class="input-group">
+                <label for="fullName">ФИО *</label>
+                <input type="text" id="fullName" required placeholder="Иванов Иван Иванович">
             </div>
-            <div class="option">
-                <label><input type="radio" name="answer" value="Зеленого"> Зеленого</label>
+            <div class="input-group">
+                <label for="callsign">Позывной (при наличии)</label>
+                <input type="text" id="callsign" placeholder="Например: Сокол">
             </div>
-            <div class="option">
-                <label><input type="radio" name="answer" value="Синего"> Синего</label>
-            </div>
-            
-            <button type="submit">Узнать результат</button>
+            <button type="submit">Начать тест (50 вопросов)</button>
         </form>
     </div>
 
-    <!-- ЭКРАН С ИТОГОВОЙ СТАТИСТИКОЙ -->
+    <!-- ЭКРАН 2: ВОПРОСЫ ТЕСТА -->
+    <div id="quiz-screen">
+        <div class="progress-bar" id="progress-text">Вопрос 1 из 50</div>
+        <h2 id="question-title" style="font-size: 20px; color: #222;">Текст вопроса</h2>
+        
+        <form id="quizForm">
+            <div id="answer-container"></div>
+            <button type="submit" id="next-btn">Далее</button>
+        </form>
+    </div>
+
+    <!-- ЭКРАН 3: ИТОГОВАЯ СТАТИСТИКА -->
     <div id="result-screen">
         <h2>Тест завершен!</h2>
         
-        <!-- Круговой индикатор процентов -->
         <div class="score-circle" id="percent-circle">0%</div>
 
+        <div class="stat-item pusechka-block" id="pusechka-text"></div>
+
         <div class="stat-item">
-            Общее количество вопросов: <span class="stat-value" id="total-questions">0</span>
+            Общее количество вопросов: <span class="stat-value">50</span>
         </div>
         <div class="stat-item">
             Количество верных ответов: <span class="stat-value" id="correct-answers">0</span>
@@ -122,35 +57,356 @@
         <button onclick="location.reload()">Пройти еще раз</button>
     </div>
 </div>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+    .quiz-container {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        max-width: 600px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    h2 { color: #333; margin-bottom: 20px; text-align: center; }
+    .progress-bar {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 15px;
+        text-align: right;
+        font-weight: bold;
+    }
+    
+    .input-group {
+        margin-bottom: 15px;
+    }
+    .input-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #555;
+        font-size: 14px;
+    }
+    .input-group input, .text-answer-input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+        font-size: 16px;
+    }
+    .input-group input:focus, .text-answer-input:focus {
+        border-color: #4CAF50;
+        outline: none;
+    }
 
+    /* Принудительный перевод букв ввода в верхний регистр */
+    .text-answer-input {
+        text-transform: uppercase;
+        font-weight: bold;
+        letter-spacing: 1px;
+        font-size: 18px;
+        text-align: center;
+    }
+
+    /* Сетка для 12 вариантов ответов */
+    .options-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        gap: 10px;
+        margin-top: 15px;
+    }
+    .options-grid.words-layout {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    }
+
+    .option {
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.2s, border-color 0.2s;
+        display: flex;
+        align-items: center;
+        box-sizing: border-box;
+    }
+    .option:hover { background-color: #eef2ff; border-color: #3f51b5; }
+    .option input { margin-right: 10px; cursor: pointer; min-width: 16px; }
+    .option label { cursor: pointer; display: block; width: 100%; font-size: 15px; }
+    
+    button {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        padding: 14px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 100%;
+        font-size: 16px;
+        margin-top: 25px;
+        font-weight: bold;
+    }
+    button:hover { background-color: #45a049; }
+    
+    #quiz-screen, #result-screen {
+        display: none;
+    }
+    
+    .stat-item {
+        font-size: 18px;
+        margin: 10px 0;
+        color: #444;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 5px;
+        border-left: 5px solid #4CAF50;
+        text-align: left;
+    }
+    .stat-value {
+        font-weight: bold;
+        color: #000;
+    }
+    .pusechka-block {
+        background: #fff0f6;
+        border-left-color: #e91e63;
+        font-size: 19px;
+        color: #c2185b;
+        line-height: 1.5;
+    }
+    .score-circle {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: #eef2ff;
+        color: #4CAF50;
+        font-size: 24px;
+        font-weight: bold;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto 20px auto;
+        border: 3px solid #4CAF50;
+    }
+</style>
 <script>
+    const alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
+    const engWords = ["Alpha", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot", "Golf", "Hotel", "India", "Juliet", "Kilo", "Lima", "Mike", "November", "Oscar", "Papa", "Quebec", "Romeo", "Sierra", "Tango", "Uniform", "Victor", "Whisky", "X-Ray", "Yankee", "Zulu"];
+    const rusWords = ["Альфа", "Браво", "Чарли", "Дельта", "Эко", "Фокстрот", "Гольф", "Хотел", "Индиа", "Джульет", "Кило", "Лима", "Майк", "Новембер", "Оскар", "Папа", "Квебек", "Ромео", "Сьерра", "Танго", "Юниформ", "Виктор", "Виски", "Эксрэй", "Янки", "Зулу"];
+    const compositeWords = engWords.map((w, idx) => `${w} (${rusWords[idx]})`);
+
+    const allQuestions = [];
+
+    // АВТОМАТИЧЕСКАЯ СБОРКА БАЗЫ ИЗ 130 ВОПРОСОВ ПО ВАШИМ БЛОКАМ
+    // Блок 1 (1 - 26): Ввод английской заглавной буквы
+    for(let i = 0; i < 26; i++) {
+        allQuestions.push({
+            id: i + 1,
+            type: "text",
+            question: `Какая буква фонетического алфавита соответствует «${engWords[i]}»?`,
+            correct: alphabet[i]
+        });
+    }
+
+    // Блок 2 (27 - 52): Ввод английской заглавной буквы
+    for(let i = 0; i < 26; i++) {
+        allQuestions.push({
+            id: i + 27,
+            type: "text",
+            question: `Какая буква фонетического алфавита соответствует «${rusWords[i]}»?`,
+            correct: alphabet[i]
+        });
+    }
+
+    // Блок 3 (53 - 78): Расшифровка буквы (выбор из 12 вариантов слов)
+    for(let i = 0; i < 26; i++) {
+        allQuestions.push({
+            id: i + 53,
+            type: "choice",
+            layout: "words",
+            question: `Как расшифровывается буква фонетического алфавита ${alphabet[i]}?`,
+            optionsPool: compositeWords,
+            correct: compositeWords[i]
+        });
+    }
+
+    // Блок 4 (79 - 104): Выбор из 12 вариантов букв
+    for(let i = 0; i < 26; i++) {
+        allQuestions.push({
+            id: i + 79,
+            type: "choice",
+            layout: "letters",
+            question: `Какая буква фонетического алфавита соответствует «${engWords[i]}»?`,
+            optionsPool: alphabet,
+            correct: alphabet[i]
+        });
+    }
+
+    // Блок 5 (105 - 130): Выбор из 12 вариантов букв
+    for(let i = 0; i < 26; i++) {
+        allQuestions.push({
+            id: i + 105,
+            type: "choice",
+            layout: "letters",
+            question: `Какая буква фонетического алфавита соответствует «${rusWords[i]}»?`,
+            optionsPool: alphabet,
+            correct: alphabet[i]
+        });
+    }
+
+    let userFullName = "";
+    let userCallsign = "";
+    let selectedQuestions = []; 
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    function getRandomSample(array, count) {
+        return [...array].sort(() => 0.5 - Math.random()).slice(0, count);
+    }
+
+    // Генерация ровно 50 случайных вопросов (по 10 из каждого блока)
+    function generateQuizPool() {
+        const pool = [];
+        const ranges = [
+            { start: 1, end: 26 },
+            { start: 27, end: 52 },
+            { start: 53, end: 78 },
+            { start: 79, end: 104 },
+            { start: 105, end: 130 }
+        ];
+
+        ranges.forEach(range => {
+            const rangeQuestions = allQuestions.filter(q => q.id >= range.start && q.id <= range.end);
+            const selectedTen = getRandomSample(rangeQuestions, 10);
+            pool.push(...selectedTen);
+        });
+
+        return pool.sort(() => 0.5 - Math.random());
+    }
+
+    // Подмешивание правильного ответа в 11 случайных вариантов
+    function generateTwelveOptions(correctAnswer, fullPool) {
+        const filteredPool = fullPool.filter(item => item !== correctAnswer);
+        const elevenRandom = getRandomSample(filteredPool, 11);
+        elevenRandom.push(correctAnswer);
+        return elevenRandom.sort(() => 0.5 - Math.random());
+    }
+
+    function displayCurrentQuestion() {
+        const progressText = document.getElementById('progress-text');
+        const questionTitle = document.getElementById('question-title');
+        const container = document.getElementById('answer-container');
+        
+        container.innerHTML = "";
+        progressText.innerText = `Вопрос ${currentQuestionIndex + 1} из 50`;
+
+        const currentQ = selectedQuestions[currentQuestionIndex];
+        questionTitle.innerText = currentQ.question;
+
+        if (currentQ.type === "choice") {
+            const gridDiv = document.createElement('div');
+            gridDiv.className = 'options-grid ' + (currentQ.layout === "words" ? "words-layout" : "");
+
+            const twelveOptions = generateTwelveOptions(currentQ.correct, currentQ.optionsPool);
+
+            twelveOptions.forEach(opt => {
+                const div = document.createElement('div');
+                div.className = 'option';
+                div.innerHTML = `<label><input type="radio" name="userAnswer" value="${opt}" required> ${opt}</label>`;
+                gridDiv.appendChild(div);
+            });
+            container.appendChild(gridDiv);
+        } else if (currentQ.type === "text") {
+            const div = document.createElement('div');
+            div.className = 'input-group';
+            div.style.marginTop = "20px";
+            div.innerHTML = `
+                <label>Введите ваш ответ английской заглавной буквой:</label>
+                <input type="text" class="text-answer-input" id="textInput" required autocomplete="off" maxlength="1" placeholder="A">
+            `;
+            container.appendChild(div);
+
+            const inputEl = div.querySelector('#textInput');
+            inputEl.focus();
+            inputEl.addEventListener('input', function() {
+                this.value = this.value.toUpperCase().replace(/[^A-Z]/g, ''); // Только латиница в верхнем регистре
+            });
+        }
+    }
+
+    document.getElementById('regForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        userFullName = document.getElementById('fullName').value.trim();
+        userCallsign = document.getElementById('callsign').value.trim();
+
+        selectedQuestions = generateQuizPool();
+
+        document.getElementById('reg-screen').style.display = 'none';
+        document.getElementById('quiz-screen').style.display = 'block';
+
+        displayCurrentQuestion();
+    });
+
     document.getElementById('quizForm').addEventListener('submit', function(e) {
-        e.preventDefault(); // Отменяем перезагрузку страницы
+        e.preventDefault();
 
-        // 1. Задаем исходные данные теста
-        const totalQuestions = 1; // Всего вопросов
-        let correctAnswers = 0;   // Изначально верных ответов ноль
+        const currentQ = selectedQuestions[currentQuestionIndex];
+        let userAnswer = "";
 
-        // 2. Получаем выбранный пользователем ответ
-        const selectedAnswer = document.querySelector('input[name="answer"]:checked').value;
-
-        // 3. Проверяем, правильный ли он
-        if (selectedAnswer === 'Зеленого') {
-            correctAnswers = 1;
+        if (currentQ.type === "choice") {
+            userAnswer = document.querySelector('input[name="userAnswer"]:checked').value;
+            if (userAnswer === currentQ.correct) {
+                score++;
+            }
+        } else if (currentQ.type === "text") {
+            userAnswer = document.getElementById('textInput').value.trim().toUpperCase();
+            if (userAnswer === currentQ.correct) {
+                score++;
+            }
         }
 
-        // 4. Считаем процент успешности
-        const successPercent = Math.round((correctAnswers / totalQuestions) * 100);
+        currentQuestionIndex++;
 
-        // 5. Записываем полученную статистику на экран результатов
-        document.getElementById('total-questions').innerText = totalQuestions;
-        document.getElementById('correct-answers').innerText = correctAnswers;
+        if (currentQuestionIndex < 50) {
+            displayCurrentQuestion();
+        } else {
+            showResults();
+        }
+    });
+
+    function showResults() {
+        const totalQuestions = 50;
+        const successPercent = Math.round((score / totalQuestions) * 100);
+
+        let nameAndCallsign = userFullName;
+        if (userCallsign !== "") {
+            nameAndCallsign += ` (${userCallsign})`;
+        }
+
+        let pointsText = "баллов";
+        if (score % 10 === 1 && score % 100 !== 11) {
+            pointsText = "балл";
+        } else if ([2, 3, 4].includes(score % 10) && ![12, 13, 14].includes(score % 100)) {
+            pointsText = "балла";
+        }
+
+        document.getElementById('pusechka-text').innerHTML = `Наша пусечка, <span class="stat-value">${nameAndCallsign}</span>, набрал (а) <span class="stat-value">${score} ${pointsText}</span> из 50.`;
+
+        document.getElementById('correct-answers').innerText = score;
         document.getElementById('percent-text').innerText = successPercent + '%';
         document.getElementById('percent-circle').innerText = successPercent + '%';
 
-        // Изменяем цвет круга в зависимости от успеха (красный если 0%, зеленый если 100%)
         const circle = document.getElementById('percent-circle');
-        if (successPercent === 100) {
+        if (successPercent >= 70) {
             circle.style.color = '#4CAF50';
             circle.style.borderColor = '#4CAF50';
         } else {
@@ -158,11 +414,9 @@
             circle.style.borderColor = '#f44336';
         }
 
-        // 6. Прячем экран с вопросом и показываем экран результатов
         document.getElementById('quiz-screen').style.display = 'none';
         document.getElementById('result-screen').style.display = 'block';
-    });
+    }
 </script>
-
 </body>
 </html>
