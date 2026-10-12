@@ -19,7 +19,7 @@
             padding: 30px;
             border-radius: 10px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            max-width: 400px;
+            max-width: 450px;
             width: 100%;
         }
         h2 { color: #333; margin-bottom: 20px; }
@@ -46,63 +46,121 @@
             margin-top: 15px;
         }
         button:hover { background-color: #45a049; }
-        #status {
-            margin-top: 15px;
-            font-weight: bold;
+        
+        /* Стили для страницы с результатами */
+        #result-screen {
+            display: none; /* Изначально скрыта */
             text-align: center;
+        }
+        .stat-item {
+            font-size: 18px;
+            margin: 15px 0;
+            color: #444;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border-left: 5px solid #4CAF50;
+        }
+        .stat-value {
+            font-weight: bold;
+            color: #000;
+        }
+        .score-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: #eef2ff;
+            color: #4CAF50;
+            font-size: 28px;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 20px auto;
+            border: 3px solid #4CAF50;
         }
     </style>
 </head>
 <body>
 
 <div class="quiz-container">
-    <h2>Вопрос: Какого цвета ёлки?</h2>
-    <form id="quizForm">
-        <div class="option">
-            <label><input type="radio" name="answer" value="Красного" required> Красного</label>
-        </div>
-        <div class="option">
-            <label><input type="radio" name="answer" value="Зеленого"> Зеленого</label>
-        </div>
-        <div class="option">
-            <label><input type="radio" name="answer" value="Синего"> Синего</label>
-        </div>
+    <!-- ЭКРАН С ВОПРОСОМ -->
+    <div id="quiz-screen">
+        <h2>Вопрос: Какого цвета ёлки?</h2>
+        <form id="quizForm">
+            <div class="option">
+                <label><input type="radio" name="answer" value="Красного" required> Красного</label>
+            </div>
+            <div class="option">
+                <label><input type="radio" name="answer" value="Зеленого"> Зеленого</label>
+            </div>
+            <div class="option">
+                <label><input type="radio" name="answer" value="Синего"> Синего</label>
+            </div>
+            
+            <button type="submit">Узнать результат</button>
+        </form>
+    </div>
+
+    <!-- ЭКРАН С ИТОГОВОЙ СТАТИСТИКОЙ -->
+    <div id="result-screen">
+        <h2>Тест завершен!</h2>
         
-        <button type="submit">Узнать результат</button>
-    </form>
-    <div id="status"></div>
+        <!-- Круговой индикатор процентов -->
+        <div class="score-circle" id="percent-circle">0%</div>
+
+        <div class="stat-item">
+            Общее количество вопросов: <span class="stat-value" id="total-questions">0</span>
+        </div>
+        <div class="stat-item">
+            Количество верных ответов: <span class="stat-value" id="correct-answers">0</span>
+        </div>
+        <div class="stat-item">
+            Процент верных ответов: <span class="stat-value" id="percent-text">0%</span>
+        </div>
+
+        <button onclick="location.reload()">Пройти еще раз</button>
+    </div>
 </div>
 
 <script>
     document.getElementById('quizForm').addEventListener('submit', function(e) {
-        e.preventDefault(); // Запрещаем перезагрузку страницы
-        
-        const statusDiv = document.getElementById('status');
-        statusDiv.innerHTML = "Отправка результатов...";
-        statusDiv.style.color = "#333";
+        e.preventDefault(); // Отменяем перезагрузку страницы
 
-        const formData = new FormData(this);
+        // 1. Задаем исходные данные теста
+        const totalQuestions = 1; // Всего вопросов
+        let correctAnswers = 0;   // Изначально верных ответов ноль
 
-        // Отправляем выбранный ответ в файл send.php
-        fetch('send.php', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.text())
-        .then(data => {
-            if (data.trim() === 'success') {
-                statusDiv.innerHTML = "Спасибо! Результат успешно отправлен на почту.";
-                statusDiv.style.color = "green";
-                document.getElementById('quizForm').reset(); // Очищаем форму
-            } else {
-                statusDiv.innerHTML = "Ошибка сервера при отправке.";
-                statusDiv.style.color = "red";
-            }
-        })
-        .catch(error => {
-            statusDiv.innerHTML = "Ошибка сети. Не удалось связаться с сервером.";
-            statusDiv.style.color = "red";
-        });
+        // 2. Получаем выбранный пользователем ответ
+        const selectedAnswer = document.querySelector('input[name="answer"]:checked').value;
+
+        // 3. Проверяем, правильный ли он
+        if (selectedAnswer === 'Зеленого') {
+            correctAnswers = 1;
+        }
+
+        // 4. Считаем процент успешности
+        const successPercent = Math.round((correctAnswers / totalQuestions) * 100);
+
+        // 5. Записываем полученную статистику на экран результатов
+        document.getElementById('total-questions').innerText = totalQuestions;
+        document.getElementById('correct-answers').innerText = correctAnswers;
+        document.getElementById('percent-text').innerText = successPercent + '%';
+        document.getElementById('percent-circle').innerText = successPercent + '%';
+
+        // Изменяем цвет круга в зависимости от успеха (красный если 0%, зеленый если 100%)
+        const circle = document.getElementById('percent-circle');
+        if (successPercent === 100) {
+            circle.style.color = '#4CAF50';
+            circle.style.borderColor = '#4CAF50';
+        } else {
+            circle.style.color = '#f44336';
+            circle.style.borderColor = '#f44336';
+        }
+
+        // 6. Прячем экран с вопросом и показываем экран результатов
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('result-screen').style.display = 'block';
     });
 </script>
 
